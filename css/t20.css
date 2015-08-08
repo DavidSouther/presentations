@@ -1,0 +1,7 @@
+body {
+  font-famliy: 'Droid Serif';
+}
+
+.reveal h1 code, .reveal h2 code, .reveal h3 code, .reveal h4 code, .reveal h5 code, .reveal h6 code {
+  text-transform: none;
+}

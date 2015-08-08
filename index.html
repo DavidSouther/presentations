@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+
+    <title>Towards 2.0</title>
+
+    <meta name="description" content="Angular best practices and a taste of migration.">
+    <meta name="author" content="David Souther">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/sky.css" id="theme">
+
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Droid+Serif" />
+    <link rel="stylesheet" href="css/t20.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="reveal">
+      <div class="slides">
+        <section>
+          <h1>Towards 2.0</h1>
+          <h3>Best practices and a taste of migration.</h3>
+          <p>
+            <small>Created by <a href="http://github.com/davidsouther">David Souther</a></small>
+          </p>
+        </section>
+
+
+        <section data-markdown>
+          <script type="text/template">
+## A Path
+* Today...
+* Tomorrow...
+* The Future...
+          </script>
+        </section>
+
+        <section data-markdown>
+          <script type="text/template">
+## Today...
+* Write good code!
+* Transpile ES6
+* Salt & Pepper directives
+          </script>
+        </section>
+
+        <section data-markdown>
+          <script type="text/template">
+## Write good code!
+* `isolateScope`
+* `controllerAs`
+* Clean interfaces
+* One Module Per File
+          </script>
+        </section>
+
+        <section data-markdown>
+          <script type="text/template">
+## `isolateScope`
+* Keeps your privates private!
+* Doesn't trash your parents!
+* (Rhetorical): What are the principles of Object Oriented Design?
+  * `isolateScope` lets components be Object Oriented!
+          </script>
+        </section>
+
+        <section>
+          <h2>Using <code>$scope</code></h2>
+<div data-height="464" data-theme-id="17567" data-slug-hash="EjrxNd" data-default-tab="js" data-user="DavidSouther" class='codepen'><pre><code>angular.module(&#39;docsSimpleDirective&#39;, [])
+.controller(&#39;Controller&#39;, [&#39;$scope&#39;, function($scope) {
+  $scope.customer = {
+    name: &#39;Naomi&#39;,
+    address: &#39;1600 Amphitheatre&#39;
+  };
+}])
+.directive(&#39;myCustomer&#39;, function() {
+  return {
+    template: &#39;Name: {{customer.name}} Address: {{customer.address}}&#39;
+  };
+});</code></pre>
+<p>See the Pen <a href='http://codepen.io/DavidSouther/pen/EjrxNd/'>EjrxNd</a> by David Souther (<a href='http://codepen.io/DavidSouther'>@DavidSouther</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+</div><script async src="//assets.codepen.io/assets/embed/ei.js"></script>
+        </section>
+
+        <section>
+          <h2>Abusing <code>$scope</code></h2>
+<div data-height="437" data-theme-id="17567" data-slug-hash="xGMxMv" data-default-tab="js" data-user="DavidSouther" class='codepen'><pre><code>angular.module(&#39;docsAbusiveDirective&#39;, [])
+.controller(&#39;NaomiController&#39;, [&#39;$scope&#39;, function($scope) {
+  $scope.customer = { name: &#39;Naomi&#39;, address: &#39;1600 Amphitheatre&#39; };
+}])
+.controller(&#39;IgorController&#39;, [&#39;$scope&#39;, function($scope) {
+  $scope.customer = { name: &#39;Igor&#39;, address: &#39;123 Someplace&#39; };
+}])
+.directive(&#39;myCustomer&#39;, function() {
+  return {
+    template: &#39;Name: {{customer.name}} Address: {{customer.address}}&#39;
+  };
+});</code></pre>
+<p>See the Pen <a href='http://codepen.io/DavidSouther/pen/xGMxMv/'>xGMxMv</a> by David Souther (<a href='http://codepen.io/DavidSouther'>@DavidSouther</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+</div><script async src="//assets.codepen.io/assets/embed/ei.js"></script>
+        </section>
+
+        <section>
+          <h2>Using <code>isolateScope</code></h2>
+<div data-height="465" data-theme-id="17567" data-slug-hash="jPdOJx" data-default-tab="js" data-user="DavidSouther" class='codepen'><pre><code>angular.module(&#39;docsScopedDirective&#39;, [])
+.controller(&#39;Controller&#39;, [&#39;$scope&#39;, function($scope) {
+  $scope.naomi = { name: &#39;Naomi&#39;, address: &#39;1600 Amphitheatre&#39; };
+  $scope.igor = { name: &#39;Igor&#39;, address: &#39;123 Someplace&#39; };
+}])
+.directive(&#39;myCustomer&#39;, function() {
+  return {
+    scope: {
+      customer: &#39;=info&#39;
+    },
+    template: &#39;&lt;div&gt;Name: {{customer.name}} Address: {{customer.address}}&lt;/div&gt;&#39;
+  };
+});</code></pre>
+<p>See the Pen <a href='http://codepen.io/DavidSouther/pen/jPdOJx/'>jPdOJx</a> by David Souther (<a href='http://codepen.io/DavidSouther'>@DavidSouther</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+</div><script async src="//assets.codepen.io/assets/embed/ei.js"></script>
+        </section>
+
+        <section data-markdown>
+          <script type="text/template">
+## `controllerAs`
+* Return to `MVVM`
+* An Object is the View Model
+* View Model has
+  * properties
+  * methods
+  * observers
+          </script>
+        </section>
+
+        <section data-background="noscope.gif" data-background-size="600px">
+        </section>
+
+        <section>
+          <h2>A trivial View Model</h2>
+<div data-height="503" data-theme-id="17567" data-slug-hash="NqoWQY" data-default-tab="js" data-user="DavidSouther" class='codepen'><pre><code>function Person() {
+  this.firstName = &#39;David&#39;;
+  this.lastName = &#39;Souther&#39;;
+  this.age = (Math.random() * 50 + 10)|0;
+}
+
+Person.prototype = Object.create({
+  fullName: function() {
+    return this.firstName + &#39; &#39; + this.lastName;
+  },
+  party: function() {
+    this.age += 1;
+  }
+});</code></pre>
+<p>See the Pen <a href='http://codepen.io/DavidSouther/pen/NqoWQY/'>NqoWQY</a> by David Souther (<a href='http://codepen.io/DavidSouther'>@DavidSouther</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+</div><script async src="//assets.codepen.io/assets/embed/ei.js"></script>
+        </section>
+
+        <section>
+          <h2>A trivial model and view</h2>
+<div data-height="430" data-theme-id="17567" data-slug-hash="NqoPgL" data-default-tab="js" data-user="DavidSouther" class='codepen'><pre><code>angular.module(&#39;personView&#39;, [])
+.controller(&#39;PersonController&#39;, Person)
+.directive(&#39;person&#39;, function(){
+  return {
+    controller: &#39;PersonController&#39;,
+    controllerAs: &#39;person&#39;,
+    template: &#39;Hello, {{ person.fullName() }}! &#39; +
+      &#39;&lt;button ng-click=&quot;person.party()&quot;&gt;Birthday!&lt;/button&gt; &#39; +
+      &#39;Happy {{ person.age }} birthday!&#39;
+  };
+});</code></pre>
+<p>See the Pen <a href='http://codepen.io/DavidSouther/pen/NqoPgL/'>NqoPgL</a> by David Souther (<a href='http://codepen.io/DavidSouther'>@DavidSouther</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+</div><script async src="//assets.codepen.io/assets/embed/ei.js"></script>
+        </section>
+
+        <section>
+          <h2>Attributes as Data In</h2>
+<div data-height="468" data-theme-id="17567" data-slug-hash="QbYeNr" data-default-tab="js" data-user="DavidSouther" class='codepen'><pre><code>angular.module(&quot;personView&quot;, [])
+.directive(&quot;person&quot;, function(){
+  return {
+    controller: Person,
+    controllerAs: &quot;person&quot;,
+    bindToController: true,
+    scope: {
+      firstName: &quot;@first&quot;,
+      lastName: &quot;@last&quot;
+    },
+    template: &quot;&lt;div&gt;Hello, {{ person.fullName() }}!&lt;/div&gt;&quot;
+  };
+});
+</code></pre>
+<p>See the Pen <a href='http://codepen.io/DavidSouther/pen/QbYeNr/'>QbYeNr</a> by David Souther (<a href='http://codepen.io/DavidSouther'>@DavidSouther</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+</div><script async src="//assets.codepen.io/assets/embed/ei.js"></script>
+        </section>
+
+        <section data-markdown>
+          <script type="text/template">
+## One Module per File
+* ### Cons
+  * Additional Boilerplate
+  * NG1 injector is flat
+* ### Pros
+  * Explicit Module Dependencies
+  * Clear separation of concerns
+  * Direct and obvious mock seams
+  * Emphasis on smaller, focused code
+          </script>
+        </section>
+
+        <section data-background="http://ichef.bbci.co.uk/images/ic/1200x675/p01gk35d.jpg">
+        </section>
+
+        <section>
+          <h2>Migrate to ES6<span class="fragment">...</span></h2>
+          <h2 class="fragment">...one step at a time</h2>
+        </section>
+
+        <section>
+          <h2><code>export</code> All the vars!</h2>
+<div data-height="268" data-theme-id="17567" data-slug-hash="zGedPx" data-default-tab="js" data-user="DavidSouther" class='codepen'><pre><code>export function Person() {/* */}
+
+Person.prototype = Object.create({/* */});
+
+export var personTemplate = &#39;...&#39;;</code></pre>
+<p>See the Pen <a href='http://codepen.io/DavidSouther/pen/zGedPx/'>zGedPx</a> by David Souther (<a href='http://codepen.io/DavidSouther'>@DavidSouther</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+</div><script async src="//assets.codepen.io/assets/embed/ei.js"></script>
+        </section>
+
+        <section>
+          <h2><code>import</code> All the vars!</h2>
+<div data-height="664" data-theme-id="17567" data-slug-hash="XbOJyX" data-default-tab="js" data-user="DavidSouther" class='codepen'><pre><code>import {
+  Person,
+  personTemplate
+} from &#39;./person&#39;;
+
+export default angular.module(&#39;personView&#39;, [
+]).directive(&#39;person&#39;, function(){
+  return {
+    controller: Person,
+    controllerAs: &#39;person&#39;,
+    bindToController: true,
+    scope: { /* */ },
+    template: personTemplate
+  };
+});
+</code></pre>
+<p>See the Pen <a href='http://codepen.io/DavidSouther/pen/XbOJyX/'>XbOJyX</a> by David Souther (<a href='http://codepen.io/DavidSouther'>@DavidSouther</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+</div><script async src="//assets.codepen.io/assets/embed/ei.js"></script>
+        </section>
+
+        <section>
+          <h2>One File</h2>
+          <p>One Module, One Export, One Import</p>
+<div data-height="546" data-theme-id="17567" data-slug-hash="QbYMQz" data-default-tab="js" data-user="DavidSouther" class='codepen'><pre><code>/* person/controller.js */
+export function Person() {};
+
+/* person/view.js */
+import { Person } from &#39;./controller&#39;;
+export default angular.module(&#39;personView&#39;, []);
+
+/* person/page.js */
+import * as viewModule from &#39;./view&#39;;
+angular.module(&#39;personPage&#39;, [
+  viewModule.name
+]);
+</code></pre>
+<p>See the Pen <a href='http://codepen.io/DavidSouther/pen/QbYMQz/'>QbYMQz</a> by David Souther (<a href='http://codepen.io/DavidSouther'>@DavidSouther</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+</div><script async src="//assets.codepen.io/assets/embed/ei.js"></script>
+        </section>
+
+        <section>
+          <h2>Classes</h2>
+          <div class="fragment">
+<div data-height="696" data-theme-id="17567" data-slug-hash="ZGwXGQ" data-default-tab="js" data-user="DavidSouther" class='codepen'><pre><code>export class Person {
+  constructor() {
+    this.firstName = &#39;David&#39;;
+    this.lastName = &#39;Souther&#39;;
+    this.age = Math.random() * 50 + 10;
+  }
+
+  set age(age) {
+    this._age = +age|0;
+  }
+
+  get age() {
+    return this._age;
+  }
+
+  get fullName() {
+    return this.firstName + &#39; &#39; + this.lastName;
+  }
+
+  party() {
+    this.age += 1;
+  }
+}
+
+Person.Template =
+  &#39;&lt;div&gt;Hello, {{ person.fullName }}! &#39; +
+  &#39;&lt;button ng-click=&quot;person.party()&quot;&gt;Party!&lt;/button&gt; &#39; +
+  &#39;Happy {{ person.age }} birthday!&lt;/div&gt;&#39;;</code></pre>
+<p>See the Pen <a href='http://codepen.io/DavidSouther/pen/ZGwXGQ/'>ZGwXGQ</a> by David Souther (<a href='http://codepen.io/DavidSouther'>@DavidSouther</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+</div><script async src="//assets.codepen.io/assets/embed/ei.js"></script>
+          </div>
+        </section>
+
+        <section>
+          <h2>Arrow Functions</h2>
+<div data-height="468" data-theme-id="17567" data-slug-hash="PqVJWV" data-default-tab="js" data-user="DavidSouther" class='codepen'><pre><code>export class Person {
+  constructor($http) {
+    this._http = $http;
+    this.firstName = &#39;David&#39;;
+    this.lastName = &#39;Souther&#39;;
+    this.age = Math.random() * 50 + 10;    
+  }
+  /* */
+  save() {
+    const id = urlencode(this.fullName);
+    const url = `/person/#{this.fullName}`;
+    this._http.post(url, this).then(()=&gt; {
+      this.saved();
+    });
+  }
+  saved() { console.log(&#39;Saved!&#39;); }
+}
+Person.$inject = [&#39;$http&#39;];</code></pre>
+<p>See the Pen <a href='http://codepen.io/DavidSouther/pen/PqVJWV/'>PqVJWV</a> by David Souther (<a href='http://codepen.io/DavidSouther'>@DavidSouther</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+</div><script async src="//assets.codepen.io/assets/embed/ei.js"></script>
+        </section>
+
+        <section>
+          <h2>Typing? In MY Javascript!?</h2>
+<div data-height="573" data-theme-id="17567" data-slug-hash="ZGwXGQ" data-default-tab="js" data-user="DavidSouther" class='codepen'><pre><code>export class Person {
+  public firstName: string = &#39;David&#39;;
+  public lastName: string = &#39;Souther&#39;;
+
+  constructor() {
+    this.age = Math.random() * 50 + 10;
+  }
+
+  public set age(age:number) {
+    this._age = +age|0;
+  }
+
+  public get age():number {
+    return this._age;
+  }
+
+  public get fullName() {
+    return this.firstName + &#39; &#39; + this.lastName;
+  }
+
+  public party() {
+    this.age += 1;
+  }
+}
+
+Person.Template =
+  &#39;&lt;div&gt;Hello, {{ person.fullName }}! &#39; +
+  &#39;&lt;button ng-click=&quot;person.party()&quot;&gt;Party!&lt;/button&gt; &#39; +
+  &#39;Happy {{ person.age }} birthday!&lt;/div&gt;&#39;;
+</code></pre>
+<p>See the Pen <a href='http://codepen.io/DavidSouther/pen/ZGwXGQ/'>ZGwXGQ</a> by David Souther (<a href='http://codepen.io/DavidSouther'>@DavidSouther</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+</div><script async src="//assets.codepen.io/assets/embed/ei.js"></script>
+        </section>
+
+        <section>
+          <h2>The Littlest Decorator</h2>
+<div data-height="318" data-theme-id="17567" data-slug-hash="YXBrjR" data-default-tab="js" data-user="DavidSouther" class='codepen'><pre><code>@Inject([&#39;$http&#39;])
+export class Person {
+  constructor($http: angular.$http) {
+    this._http = $http;
+  }
+}
+</code></pre>
+<p>See the Pen <a href='http://codepen.io/DavidSouther/pen/YXBrjR/'>YXBrjR</a> by David Souther (<a href='http://codepen.io/DavidSouther'>@DavidSouther</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+</div><script async src="//assets.codepen.io/assets/embed/ei.js"></script>
+        </section>
+
+        <section>
+          <h2>How does it work?</h2>
+<div data-height="468" data-theme-id="17567" data-slug-hash="qdgPMY" data-default-tab="js" data-user="DavidSouther" class='codepen'><pre><code>function Inject(injectables: string[]): function {
+  return function(injectable: function) {
+    injectable.$inject = injectables;
+    return injectable;
+  }
+}</code></pre>
+<p>See the Pen <a href='http://codepen.io/DavidSouther/pen/qdgPMY/'>qdgPMY</a> by David Souther (<a href='http://codepen.io/DavidSouther'>@DavidSouther</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+</div><script async src="//assets.codepen.io/assets/embed/ei.js"></script>
+        </section>
+
+        <section>
+          <h2>Decorate all the Class-likes!</h2>
+
+        </section>
+<!--
+Salt and Pepper with Decorators
+- @Inject
+- @View
+- @Component
+- @Module
+- ng-forward
+
+Mix and Match
+- NG1 on top
+- interleave
+- change decorator imports
+- migrate bindings
+- Migrate view details
+-->
+
+      </div>
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+
+    <script>
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: 'plugin/zoom-js/zoom.js', async: true },
+          { src: 'plugin/notes/notes.js', async: true }
+        ]
+      });
+
+    </script>
+
+  </body>
+</html>
