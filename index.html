@@ -73,24 +73,13 @@
 ## Write good code!
 * `isolateScope`
 * `controllerAs`
-* Clean interfaces
 * One Module Per File
-          </script>
-        </section>
-
-        <section data-markdown>
-          <script type="text/template">
-## `isolateScope`
-* Keeps your privates private!
-* Doesn't trash your parents!
-* (Rhetorical): What are the principles of Object Oriented Design?
-  * `isolateScope` lets components be Object Oriented!
           </script>
         </section>
 
         <section>
           <h2>Using <code>$scope</code></h2>
-<div data-height="464" data-theme-id="17567" data-slug-hash="EjrxNd" data-default-tab="js" data-user="DavidSouther" class='codepen'><pre><code>angular.module(&#39;docsSimpleDirective&#39;, [])
+<div data-height="484" data-theme-id="17567" data-slug-hash="EjrxNd" data-default-tab="js" data-user="DavidSouther" class='codepen'><pre><code>angular.module(&#39;docsSimpleDirective&#39;, [])
 .controller(&#39;Controller&#39;, [&#39;$scope&#39;, function($scope) {
   $scope.customer = {
     name: &#39;Naomi&#39;,
@@ -108,7 +97,7 @@
 
         <section>
           <h2>Abusing <code>$scope</code></h2>
-<div data-height="437" data-theme-id="17567" data-slug-hash="xGMxMv" data-default-tab="js" data-user="DavidSouther" class='codepen'><pre><code>angular.module(&#39;docsAbusiveDirective&#39;, [])
+<div data-height="484" data-theme-id="17567" data-slug-hash="xGMxMv" data-default-tab="js" data-user="DavidSouther" class='codepen'><pre><code>angular.module(&#39;docsAbusiveDirective&#39;, [])
 .controller(&#39;NaomiController&#39;, [&#39;$scope&#39;, function($scope) {
   $scope.customer = { name: &#39;Naomi&#39;, address: &#39;1600 Amphitheatre&#39; };
 }])
@@ -141,6 +130,16 @@
 });</code></pre>
 <p>See the Pen <a href='http://codepen.io/DavidSouther/pen/jPdOJx/'>jPdOJx</a> by David Souther (<a href='http://codepen.io/DavidSouther'>@DavidSouther</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
 </div><script async src="//assets.codepen.io/assets/embed/ei.js"></script>
+        </section>
+
+        <section data-markdown>
+          <script type="text/template">
+## `isolateScope`
+* Keeps your privates private!
+* Doesn't trash your parents!
+* (Rhetorical): What are the principles of Object Oriented Design?
+  * `isolateScope` lets components be Object Oriented!
+          </script>
         </section>
 
         <section data-markdown>
@@ -275,7 +274,6 @@ export default angular.module(&#39;personView&#39;, [
           <p>One Module, One Export, One Import</p>
 <div data-height="546" data-theme-id="17567" data-slug-hash="QbYMQz" data-default-tab="js" data-user="DavidSouther" class='codepen'><pre><code>/* person/controller.js */
 export function Person() {};
-
 /* person/view.js */
 import { Person } from &#39;./controller&#39;;
 export default angular.module(&#39;personView&#39;, []);
@@ -417,11 +415,16 @@ export class Person {
         </section>
 <!--
 Salt and Pepper with Decorators
-- @Inject
 - @View
 - @Component
 - @Module
 - ng-forward
+
+
+
+
+
+
 
 Mix and Match
 - NG1 on top
